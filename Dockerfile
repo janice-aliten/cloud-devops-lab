@@ -2,7 +2,7 @@
 # Build: docker build -t cloud-devops-lab .
 # Run:   docker run -p 8000:8000 cloud-devops-lab
 
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
