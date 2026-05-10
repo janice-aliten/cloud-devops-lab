@@ -1,0 +1,49 @@
+---
+# cloud-devops-lab — Ansible localhost validation playbook
+#
+# Checks the local Docker environment and lab container state.
+# Run LOCALLY after docker compose up — not part of CI.
+#
+# Usage:
+#   ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+#
+# Requirements:
+#   - Ansible installed locally
+#   - Docker installed and running
+#   - docker compose up --build has been run
+
+- name: cloud-devops-lab local environment check
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Check Docker is installed
+      ansible.builtin.command: docker --version
+      register: docker_version
+      changed_when: false
+      failed_when: docker_version.rc != 0
+
+    - name: Print Docker version
+      ansible.builtin.debug:
+        msg: "Docker installed: {{ docker_version.stdout }}"
+
+    - name: Verify Docker daemon is reachable
+      ansible.builtin.command: docker info
+      register: docker_info
+      changed_when: false
+      failed_when: docker_info.rc != 0
+
+    - name: Verify FastAPI container is running
+      ansible.builtin.command: >
+        docker inspect --format="{{ '{{' }}.State.Status{{ '}}' }}" devops-lab-app
+      register: container_status
+      changed_when: false
+      failed_when: container_status.stdout != "running"
+
+    - name: Print status summary
+      ansible.builtin.debug:
+        msg:
+          - "Docker: installed and daemon reachable"
+          - "FastAPI container status: {{ container_status.stdout }}"
+          - "All checks passed"

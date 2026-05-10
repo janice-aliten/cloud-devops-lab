@@ -1,0 +1,39 @@
+groups:
+  - name: cloud-devops-lab-alerts
+    rules:
+
+      - alert: AppDown
+        expr: up{job="cloud-devops-lab-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application is down"
+          description: "Prometheus cannot reach the app /metrics endpoint."
+
+      - alert: AppHealthCheckFailing
+        expr: absent(app_requests_total{endpoint="/health"})
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No health check requests recorded"
+          description: "The /health endpoint has not been scraped for over 1 minute."
+
+      - alert: AppRestartLoop
+        expr: rate(app_requests_total[5m]) == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "App may be in a restart loop"
+          description: "Request rate has been zero for 2 minutes — the container may be restarting."
+
+      - alert: PrometheusScrapeFailure
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus scrape target is down"
+          description: "One or more scrape targets are unreachable."

@@ -1,0 +1,20 @@
+2024-11-01T02:14:01Z INFO  service=app startup complete port=8000
+2024-11-01T02:14:05Z INFO  service=app GET /health status=200 duration_ms=1
+2024-11-01T02:14:15Z INFO  service=app GET /metrics status=200 duration_ms=2
+2024-11-01T02:14:30Z WARN  service=app slow response endpoint=/metrics duration_ms=450
+2024-11-01T02:15:00Z INFO  service=app GET /health status=200 duration_ms=1
+2024-11-01T02:15:10Z ERROR service=app upstream connection refused host=internal-service port=5432
+2024-11-01T02:15:10Z WARN  service=app retrying connection attempt=1 max=3
+2024-11-01T02:15:15Z WARN  service=app retrying connection attempt=2 max=3
+2024-11-01T02:15:20Z ERROR service=app max retries exceeded — marking service unhealthy
+2024-11-01T02:15:20Z INFO  service=app GET /health status=503 duration_ms=0
+2024-11-01T02:15:25Z INFO  service=app container restarting
+2024-11-01T02:15:31Z INFO  service=app startup complete port=8000
+2024-11-01T02:15:35Z INFO  service=app GET /health status=200 duration_ms=1
+2024-11-01T02:16:00Z INFO  service=prometheus scrape target=app:8000 result=success samples=12
+2024-11-01T02:16:15Z INFO  service=prometheus scrape target=app:8000 result=success samples=14
+2024-11-01T02:17:00Z WARN  service=prometheus scrape target=app:8000 result=failed reason=connection_refused
+2024-11-01T02:17:05Z ERROR service=prometheus target down job=cloud-devops-lab-app
+2024-11-01T02:17:10Z INFO  service=prometheus scrape target=app:8000 result=success samples=11
+2024-11-01T02:18:00Z INFO  service=grafana dashboard loaded uid=devops-lab-health
+2024-11-01T02:18:05Z INFO  service=grafana datasource healthy name=Prometheus uid=prometheus

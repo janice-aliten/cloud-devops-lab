@@ -1,0 +1,65 @@
+# cloud-devops-lab — local three-service monitoring stack
+#
+# Services:
+#   app        — FastAPI health and metrics service (port 8000)
+#   prometheus — metrics scraping (port 9090)
+#   grafana    — dashboard visualisation (port 3000)
+#
+# Usage:
+#   docker compose up --build
+#   docker compose down
+#
+# Access:
+#   App:        http://localhost:8000/health
+#   Prometheus: http://localhost:9090
+#   Grafana:    http://localhost:3001  (admin / changeme)
+
+services:
+  app:
+    build: .
+    container_name: devops-lab-app
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+      - APP_LOG_LEVEL=${APP_LOG_LEVEL:-info}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: devops-lab-prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert-rules-example.yml:/etc/prometheus/alert-rules-example.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=1d"
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:10.4.3
+    container_name: devops-lab-grafana
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    restart: unless-stopped
+    depends_on:
+      - prometheus
