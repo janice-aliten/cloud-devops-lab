@@ -22,13 +22,13 @@ deployment documentation.
 | Live metrics | `/metrics` endpoint with request count and uptime |
 | Monitoring | Prometheus scraping, Grafana dashboard auto-provisioned |
 | Alerting | Prometheus alert rules for app down and restart loop |
-| CI/CD pipeline | GitHub Actions: validate job + build-and-push job |
+| CI/CD pipeline | GitHub Actions: validate, secret scan, Trivy scan, build-and-push |
 | Infrastructure as Code | Terraform AWS VPC + security group + ECS cluster |
 | Configuration management | Ansible localhost Docker/app check playbook |
 | Linux troubleshooting | Bash scripts: smoke test, DNS check, log review |
 | Deployment documentation | Runbook, troubleshooting notes, rollback plan |
 | Incident response | Container restart loop scenario end-to-end |
-| Security hygiene | `.env.example`, `.gitignore`, security notes |
+| Security hygiene | `.env.example`, `.gitignore`, Gitleaks, Trivy, Dependabot |
 
 ---
 
@@ -48,7 +48,9 @@ Validated in CI:
 - Python syntax check
 - Docker Compose configuration check
 - Terraform init/fmt/validate
-- Docker image build and push workflow
+- Gitleaks secret scan across full git history
+- Trivy filesystem scan for HIGH and CRITICAL findings
+- Docker image build and push to GitHub Container Registry
 
 ---
 
@@ -64,7 +66,8 @@ cloud-devops-lab/
 ├── .env.example            Environment variable template (no secrets)
 ├── terraform/              AWS VPC + security group + ECS skeleton
 ├── ansible/                Localhost Docker/app validation playbook
-├── .github/workflows/      CI validate + CD build-and-push
+├── .github/workflows/      CI validate + security scan + CD build-and-push
+├── .github/dependabot.yml  Automated dependency monitoring
 ├── monitoring/             Prometheus config, alert rules, Grafana provisioning
 ├── scripts/                Smoke test, DNS check, log review
 ├── docs/                   Runbook, troubleshooting, incident, rollback, security
@@ -103,14 +106,21 @@ Access:
 
 ## CI/CD pipeline
 
-Every push runs two jobs:
+Every push runs four jobs:
 
 **validate** — Python syntax, Docker Compose config, Terraform init/fmt/validate.
 No cloud credentials required.
 
+**secret-scan** — Gitleaks scans the full git history for accidentally
+committed secrets, tokens, or credentials.
+
+**security-scan** — Trivy scans the repository filesystem for HIGH and
+CRITICAL vulnerabilities and misconfigurations in Terraform, Dockerfiles,
+and dependencies.
+
 **build-and-push** — Builds the Docker image and pushes to
-`ghcr.io/janice-aliten/cloud-devops-lab:latest` on merge to main.
-Uses `GITHUB_TOKEN` only.
+`ghcr.io/janice-aliten/cloud-devops-lab:latest` on merge to main only
+after all three preceding jobs pass. Uses `GITHUB_TOKEN` only.
 
 ---
 
@@ -139,6 +149,20 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
 ```
 
 Not part of the CI workflow — local validation only.
+
+---
+
+## Security operations relevance
+
+This lab includes security-operations practices relevant to CI/CD and
+infrastructure environments:
+
+- Secret scanning using Gitleaks — runs on every push via GitHub Actions
+- IaC and container scanning using Trivy — runs on every push via GitHub Actions
+- Dependabot configuration for dependency visibility across pip, Docker, GitHub Actions, and Terraform
+- Security controls and evidence mapping (`docs/security-controls-evidence.md`)
+- Vulnerability management runbook (`docs/vulnerability-management-runbook.md`)
+- Rollback, incident-response, and audit-oriented documentation
 
 ---
 
