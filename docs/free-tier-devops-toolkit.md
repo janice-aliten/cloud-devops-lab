@@ -64,8 +64,8 @@ troubleshooting, cloud infrastructure modelling, and security hygiene.
 |---|---|---|
 | `.gitignore` | Built in to Git | Blocks `.env`, Terraform state files, keys, certificates, and logs from being committed |
 | `.env.example` | Convention, no cost | Documents required environment variables without exposing real values |
-| Gitleaks | Free, open source | Planned future CI enhancement for detecting accidentally committed secrets |
-| Trivy | Free, open source | Planned future CI enhancement for scanning container images, Terraform, and Ansible configuration |
+| Gitleaks | Free, open source | Runs in CI on every push to detect accidentally committed secrets |
+| Trivy | Free, open source | Runs in CI on every push to scan repository filesystem, Terraform, Docker, and configuration files |
 
 ### Configuration Management
 
@@ -150,8 +150,8 @@ Results: 9 passed, 0 failed
 | Item | Status | Notes |
 |---|---|---|
 | Docker image build and push | Implemented | Pushes to GitHub Container Registry on merge to main |
-| Gitleaks secret scanning in CI | Planned | Future enhancement for detecting accidentally committed secrets |
-| Trivy IaC/container scan in CI | Planned | Future enhancement for Terraform, Ansible, and container scanning |
+| Gitleaks secret scanning in CI | Implemented | Runs on every push via GitHub Actions |
+| Trivy IaC/container scan in CI | Implemented | Runs on every push via GitHub Actions |
 | AWS S3 log archive Terraform module | Planned | Extend Terraform skeleton with S3 bucket and least-privilege IAM policy |
 | MongoDB sample schema documentation | Planned | Document market-data storage schema for companion infrastructure project |
 | ECS task definition and service skeleton | Planned | Extend Terraform to include deployable task definition |

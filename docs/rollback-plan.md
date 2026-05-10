@@ -33,7 +33,7 @@ is known:
 ```bash
 # Edit docker-compose.yml to pin the previous image tag
 # Replace: build: .
-# With:    image: ghcr.io/[username]/cloud-devops-lab:sha-[previous-sha]
+# With:    image: ghcr.io/janice-aliten/cloud-devops-lab:sha-[previous-sha]
 
 # Pull and restart
 docker compose pull app
@@ -76,7 +76,7 @@ bash scripts/smoke-test.sh
 curl http://localhost:9090/api/v1/targets | grep '"health":"up"'
 
 # 5. Grafana dashboard is green
-# Navigate to http://localhost:3000
+# Navigate to http://localhost:3001
 ```
 
 ## In ECS/Fargate (production equivalent)

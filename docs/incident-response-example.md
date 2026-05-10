@@ -60,8 +60,7 @@ exit. The new container starts, attempts to bind port 8000, fails
 immediately, and is restarted by Docker's restart policy. Each restart
 fails for the same reason, producing a restart loop.
 
-This pattern occurs in ECS/Fargate when a task exits uncleanly and the
-container port is not released before the replacement task starts.
+A comparable failure pattern can occur in container orchestration platforms when a replacement task repeatedly fails health checks or cannot bind/listen correctly.
 
 ---
 
@@ -106,7 +105,7 @@ curl http://localhost:9090/api/v1/targets | grep health
 # "health": "up"
 
 # Confirm Grafana dashboard is green
-# Navigate to http://localhost:3000 — App Status panel should show UP
+# Navigate to http://localhost:3001 — App Status panel should show UP
 ```
 
 ---
