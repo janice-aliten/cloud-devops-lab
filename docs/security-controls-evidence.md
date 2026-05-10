@@ -31,8 +31,8 @@ employer data, or customer data are included.
 
 | Job | Tool | Trigger | Exit behaviour |
 |---|---|---|---|
-| secret-scan | Gitleaks v2 | Every push and pull request | Fails CI if secrets found |
-| security-scan | Trivy 0.24.0 | Every push and pull request | Reports HIGH/CRITICAL findings; exit-code 0 during lab phase |
+| `secret-scan` | Gitleaks v2 | Every push and pull request | Fails CI if secrets are found |
+| `security-scan` | Trivy Action v0.35.0 | Every push and pull request | Reports HIGH/CRITICAL findings; `exit-code: 0` during lab phase |
 
 ---
 
