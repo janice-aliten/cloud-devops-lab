@@ -1,3 +1,5 @@
+[![CI/CD](https://github.com/janice-aliten/cloud-devops-lab/actions/workflows/validate.yml/badge.svg)](https://github.com/janice-aliten/cloud-devops-lab/actions/workflows/validate.yml)
+
 # cloud-devops-lab
 
 A sanitized DevOps and infrastructure lab demonstrating container
@@ -27,6 +29,26 @@ deployment documentation.
 | Deployment documentation | Runbook, troubleshooting notes, rollback plan |
 | Incident response | Container restart loop scenario end-to-end |
 | Security hygiene | `.env.example`, `.gitignore`, security notes |
+
+---
+
+## Validation status
+
+Validated locally:
+
+- Docker Compose stack starts successfully
+- FastAPI `/health`, `/ready`, and `/metrics` return HTTP 200
+- Prometheus target is UP and scrapes app metrics
+- Grafana datasource and dashboard are provisioned successfully
+- Smoke test passes 9/9 checks
+- Terraform validates with `terraform init -backend=false`, `terraform fmt -check -recursive`, and `terraform validate`
+
+Validated in CI:
+
+- Python syntax check
+- Docker Compose configuration check
+- Terraform init/fmt/validate
+- Docker image build and push workflow
 
 ---
 
