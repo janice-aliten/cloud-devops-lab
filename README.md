@@ -55,7 +55,7 @@ cloud-devops-lab/
 
 ```bash
 # Clone
-git clone https://github.com/[your-username]/cloud-devops-lab.git
+git clone https://github.com/janice-aliten/cloud-devops-lab.git
 cd cloud-devops-lab
 
 # Configure (copy template — edit if needed)
@@ -75,7 +75,7 @@ Access:
 | App health | http://localhost:8000/health |
 | App metrics | http://localhost:8000/metrics |
 | Prometheus | http://localhost:9090 |
-| Grafana | http://localhost:3000 (admin / changeme) |
+| Grafana | http://localhost:3001 (lab-admin / local-lab-password) |
 
 ---
 
@@ -87,7 +87,7 @@ Every push runs two jobs:
 No cloud credentials required.
 
 **build-and-push** — Builds the Docker image and pushes to
-`ghcr.io/[username]/cloud-devops-lab:latest` on merge to main.
+`ghcr.io/janice-aliten/cloud-devops-lab:latest` on merge to main.
 Uses `GITHUB_TOKEN` only.
 
 ---

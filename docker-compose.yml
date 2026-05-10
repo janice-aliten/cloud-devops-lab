@@ -1,18 +1,25 @@
 # cloud-devops-lab — local three-service monitoring stack
 #
 # Services:
-#   app        — FastAPI health and metrics service (port 8000)
-#   prometheus — metrics scraping (port 9090)
-#   grafana    — dashboard visualisation (port 3000)
+#   app        — FastAPI health and metrics service (host port 8000, container port 8000)
+#   prometheus — metrics scraping (host port 9090, container port 9090)
+#   grafana    — dashboard visualisation (host port 3001, container port 3000)
 #
 # Usage:
 #   docker compose up --build
 #   docker compose down
 #
 # Access:
-#   App:        http://localhost:8000/health
-#   Prometheus: http://localhost:9090
-#   Grafana:    http://localhost:3001  (admin / changeme)
+#   App health:  http://localhost:8000/health
+#   App ready:   http://localhost:8000/ready
+#   App metrics: http://localhost:8000/metrics
+#   Prometheus:  http://localhost:9090
+#   Grafana:     http://localhost:3001  (lab-admin / local-lab-password)
+#
+# Notes:
+#   Grafana credentials below are local lab defaults only.
+#   Override them in .env for any non-local use.
+#   Do not reuse these values in production.
 
 services:
   app:
@@ -25,8 +32,13 @@ services:
       - APP_LOG_LEVEL=${APP_LOG_LEVEL:-info}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c",
-             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -54,8 +66,8 @@ services:
     ports:
       - "${GRAFANA_PORT:-3001}:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-lab-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-local-lab-password}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
